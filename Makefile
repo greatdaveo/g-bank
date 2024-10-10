@@ -1,19 +1,19 @@
 postgres: 
-	docker run --name root -e POSTGRES_PASSWORD=mysecretpassword -p 5432:5432 -d postgres:12-alpine
+	docker run --name gbank_postgres_container -e POSTGRES_PASSWORD=mysecretpassword -p 5433:5432 -d postgres:12-alpine
 
 createdb: 
-	docker exec -it root createdb --username=postgres --owner=postgres g-bank
+	docker exec -it gbank_postgres_container createdb --username=postgres --owner=postgres g-bank
 
 dropdb: 
-	docker exec -it root dropdb --username=postgres g-bank
+	docker exec -it gbank_postgres_container dropdb --username=postgres g-bank
 
 migrateup: 
-	migrate -path db/migration -database "postgresql://postgres:mysecretpassword@localhost:5432/g-bank?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://postgres:mysecretpassword@localhost:5433/g-bank?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "postgresql://postgres:mysecretpassword@localhost:5432/g-bank?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://postgres:mysecretpassword@localhost:5433/g-bank?sslmode=disable" -verbose down
 
 sqlc: 
 	sqlc generate
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc
